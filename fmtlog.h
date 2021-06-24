@@ -576,7 +576,14 @@ private:
     const char* begin = in.data();
     const char* p = begin;
     std::unique_ptr<char[]> unnamed_str(new char[in.size() + 1 + num_named_args * 5]);
+#if defined(__GNUC__) && __GNUC__ < 10
+    // Workaround fmt 8.0.0 spurious warning:
+    //      ‘struct fmt::v7::detail::named_arg_info<char>’ has no user-provided default constructor
+    // https://github.com/fmtlib/fmt/issues/2383
+    fmt::detail::named_arg_info<char> named_args[std::max(num_named_args, (size_t)1)] = {};
+#else
     fmt::detail::named_arg_info<char> named_args[std::max(num_named_args, (size_t)1)];
+#endif
     storeNamedArgs<0, 0>(named_args, args...);
 
     char* out = (char*)unnamed_str.get();
