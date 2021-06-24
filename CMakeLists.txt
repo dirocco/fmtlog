@@ -19,15 +19,11 @@ FetchContent_Declare(
   GIT_SHALLOW TRUE
   GIT_TAG "8.0.0"
 )
-if(NOT fmt_POPULATED)
-  FetchContent_Populate(fmt)
-  include_directories(SYSTEM ${fmt_SOURCE_DIR}/include)
-  add_subdirectory(${fmt_SOURCE_DIR} ${fmt_BINARY_DIR})
-endif()
+FetchContent_MakeAvailable(fmt)
 
 if(NOT FMTLOG_STATIC_ONLY)
   add_library(fmtlog-shared SHARED fmtlog.cc)
-  target_include_directories(fmtlog-shared SYSTEM PUBLIC ${fmt_SOURCE_DIR}/include)
+  target_include_directories(fmtlog-shared SYSTEM PUBLIC ${CMAKE_PROJECT_SOURCE_DIR} ${fmt_SOURCE_DIR}/include)
   if(MSVC)
     target_link_libraries(fmtlog-shared fmt)
   else()
@@ -38,7 +34,7 @@ endif(NOT FMTLOG_STATIC_ONLY)
 
 if(NOT FMTLOG_SHARED_ONLY)
   add_library(fmtlog-static fmtlog.cc)
-  target_include_directories(fmtlog-static SYSTEM PUBLIC ${fmt_SOURCE_DIR}/include)
+  target_include_directories(fmtlog-static SYSTEM PUBLIC ${CMAKE_PROJECT_SOURCE_DIR} ${fmt_SOURCE_DIR}/include)
   if(MSVC)
     target_link_libraries(fmtlog-static fmt)
   else()
