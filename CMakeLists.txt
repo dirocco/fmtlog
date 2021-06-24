@@ -14,12 +14,16 @@ link_directories(.)
 
 include(FetchContent)
 FetchContent_Declare(
-    fmt
-    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-    GIT_SHALLOW TRUE
-    GIT_TAG "8.0.0"
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_SHALLOW TRUE
+  GIT_TAG "8.0.0"
 )
-FetchContent_MakeAvailable(fmt)
+if(NOT fmt_POPULATED)
+  FetchContent_Populate(fmt)
+  include_directories(SYSTEM ${fmt_SOURCE_DIR}/include)
+  add_subdirectory(${fmt_SOURCE_DIR} ${fmt_BINARY_DIR})
+endif()
 
 if(NOT FMTLOG_STATIC_ONLY)
   add_library(fmtlog-shared SHARED fmtlog.cc)
